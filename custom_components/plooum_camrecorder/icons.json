@@ -1,0 +1,13 @@
+{
+  "entity": {
+    "button": { "take_photo": { "default": "mdi:camera" } },
+    "switch": { "recording": { "default": "mdi:record-rec", "state": { "off": "mdi:record" } } },
+    "sensor": { "last_photo": { "default": "mdi:image" }, "last_video": { "default": "mdi:filmstrip" } }
+  },
+  "services": {
+    "snapshot": { "service": "mdi:camera" },
+    "record": { "service": "mdi:video" },
+    "start_recording": { "service": "mdi:record-rec" },
+    "stop_recording": { "service": "mdi:stop" }
+  }
+}

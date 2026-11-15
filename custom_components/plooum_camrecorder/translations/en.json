@@ -1,0 +1,111 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Plooum CamRecorder",
+        "description": "Saves photos and videos of your cameras on the Home Assistant server, from dashboards, automations and scripts.",
+        "data": {
+          "folder": "Folder",
+          "keep_days": "Keep for",
+          "max_size_gb": "Maximum size",
+          "cameras": "Cameras with entities"
+        },
+        "data_description": {
+          "folder": "Where photos and videos are saved, one subfolder per camera. Must be a media folder (or inside allowlist_external_dirs) to show in the media browser.",
+          "keep_days": "Files older than this are deleted. 0: kept forever.",
+          "max_size_gb": "Above this, the oldest files are deleted. 0: no limit.",
+          "cameras": "These cameras get a Take photo button, a Recording switch and Last photo / Last video sensors. The actions work with every camera anyway."
+        }
+      }
+    },
+    "error": {
+      "not_absolute": "Give an absolute path.",
+      "not_allowed": "Home Assistant may not write there: use a media folder or add it to allowlist_external_dirs."
+    },
+    "abort": {
+      "single_instance_allowed": "Plooum CamRecorder is already set up: change its options instead."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Plooum CamRecorder options",
+        "description": "Folder, retention and the cameras that get entities.",
+        "data": {
+          "folder": "Folder",
+          "keep_days": "Keep for",
+          "max_size_gb": "Maximum size",
+          "cameras": "Cameras with entities"
+        },
+        "data_description": {
+          "folder": "Where photos and videos are saved, one subfolder per camera. Must be a media folder (or inside allowlist_external_dirs) to show in the media browser.",
+          "keep_days": "Files older than this are deleted. 0: kept forever.",
+          "max_size_gb": "Above this, the oldest files are deleted. 0: no limit.",
+          "cameras": "These cameras get a Take photo button, a Recording switch and Last photo / Last video sensors. The actions work with every camera anyway."
+        }
+      }
+    },
+    "error": {
+      "not_absolute": "Give an absolute path.",
+      "not_allowed": "Home Assistant may not write there: use a media folder or add it to allowlist_external_dirs."
+    }
+  },
+  "entity": {
+    "button": {
+      "take_photo": {
+        "name": "Take photo"
+      }
+    },
+    "switch": {
+      "recording": {
+        "name": "Recording"
+      }
+    },
+    "sensor": {
+      "last_photo": {
+        "name": "Last photo"
+      },
+      "last_video": {
+        "name": "Last video"
+      }
+    }
+  },
+  "services": {
+    "snapshot": {
+      "name": "Take photo",
+      "description": "Saves a photo of the cameras on the server. Responds with the saved files."
+    },
+    "record": {
+      "name": "Record video",
+      "description": "Records a video of the cameras on the server and waits until it is saved. Responds with the saved files. The camera needs a stream.",
+      "fields": {
+        "duration": {
+          "name": "Duration",
+          "description": "Length of the video, lookback not included."
+        },
+        "lookback": {
+          "name": "Lookback",
+          "description": "Seconds before the call to include. Only when the camera's stream already runs (Preload stream, or someone watching)."
+        }
+      }
+    },
+    "start_recording": {
+      "name": "Start recording",
+      "description": "Starts a video of the cameras, stopped by Stop recording or after the maximum duration. The camera needs a stream.",
+      "fields": {
+        "max_duration": {
+          "name": "Maximum duration",
+          "description": "The video stops by itself after this long."
+        },
+        "lookback": {
+          "name": "Lookback",
+          "description": "Seconds before the call to include. Only when the camera's stream already runs (Preload stream, or someone watching)."
+        }
+      }
+    },
+    "stop_recording": {
+      "name": "Stop recording",
+      "description": "Stops the videos of the cameras and waits until they are saved. Responds with the saved files."
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Plooum CamRecorder",
+        "description": "Enregistre des photos et des vidéos de tes caméras sur le serveur Home Assistant, depuis les tableaux de bord, les automatisations et les scripts.",
+        "data": {
+          "folder": "Dossier",
+          "keep_days": "Conserver pendant",
+          "max_size_gb": "Taille maximale",
+          "cameras": "Caméras avec entités"
+        },
+        "data_description": {
+          "folder": "Où les photos et vidéos sont enregistrées, un sous-dossier par caméra. Doit être un dossier multimédia (ou dans allowlist_external_dirs) pour apparaître dans le navigateur multimédia.",
+          "keep_days": "Les fichiers plus vieux sont supprimés. 0 : conservés pour toujours.",
+          "max_size_gb": "Au-delà, les fichiers les plus anciens sont supprimés. 0 : pas de limite.",
+          "cameras": "Ces caméras reçoivent un bouton Prendre une photo, un interrupteur Enregistrement et des capteurs Dernière photo / Dernière vidéo. Les actions marchent de toute façon avec toutes les caméras."
+        }
+      }
+    },
+    "error": {
+      "not_absolute": "Donne un chemin absolu.",
+      "not_allowed": "Home Assistant n'a pas le droit d'écrire là : utilise un dossier multimédia ou ajoute-le à allowlist_external_dirs."
+    },
+    "abort": {
+      "single_instance_allowed": "Plooum CamRecorder est déjà configuré : modifie plutôt ses options."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options de Plooum CamRecorder",
+        "description": "Dossier, rétention et caméras qui reçoivent des entités.",
+        "data": {
+          "folder": "Dossier",
+          "keep_days": "Conserver pendant",
+          "max_size_gb": "Taille maximale",
+          "cameras": "Caméras avec entités"
+        },
+        "data_description": {
+          "folder": "Où les photos et vidéos sont enregistrées, un sous-dossier par caméra. Doit être un dossier multimédia (ou dans allowlist_external_dirs) pour apparaître dans le navigateur multimédia.",
+          "keep_days": "Les fichiers plus vieux sont supprimés. 0 : conservés pour toujours.",
+          "max_size_gb": "Au-delà, les fichiers les plus anciens sont supprimés. 0 : pas de limite.",
+          "cameras": "Ces caméras reçoivent un bouton Prendre une photo, un interrupteur Enregistrement et des capteurs Dernière photo / Dernière vidéo. Les actions marchent de toute façon avec toutes les caméras."
+        }
+      }
+    },
+    "error": {
+      "not_absolute": "Donne un chemin absolu.",
+      "not_allowed": "Home Assistant n'a pas le droit d'écrire là : utilise un dossier multimédia ou ajoute-le à allowlist_external_dirs."
+    }
+  },
+  "entity": {
+    "button": {
+      "take_photo": {
+        "name": "Prendre une photo"
+      }
+    },
+    "switch": {
+      "recording": {
+        "name": "Enregistrement"
+      }
+    },
+    "sensor": {
+      "last_photo": {
+        "name": "Dernière photo"
+      },
+      "last_video": {
+        "name": "Dernière vidéo"
+      }
+    }
+  },
+  "services": {
+    "snapshot": {
+      "name": "Prendre une photo",
+      "description": "Enregistre une photo des caméras sur le serveur. Répond avec les fichiers enregistrés."
+    },
+    "record": {
+      "name": "Enregistrer une vidéo",
+      "description": "Enregistre une vidéo des caméras sur le serveur et attend qu'elle soit écrite. Répond avec les fichiers enregistrés. La caméra doit avoir un flux.",
+      "fields": {
+        "duration": {
+          "name": "Durée",
+          "description": "Longueur de la vidéo, hors retour en arrière."
+        },
+        "lookback": {
+          "name": "Retour en arrière",
+          "description": "Secondes avant l'appel à inclure. Seulement quand le flux de la caméra tourne déjà (Précharger le flux, ou quelqu'un qui regarde)."
+        }
+      }
+    },
+    "start_recording": {
+      "name": "Démarrer l'enregistrement",
+      "description": "Démarre une vidéo des caméras, arrêtée par Arrêter l'enregistrement ou après la durée maximale. La caméra doit avoir un flux.",
+      "fields": {
+        "max_duration": {
+          "name": "Durée maximale",
+          "description": "La vidéo s'arrête d'elle-même après ce temps."
+        },
+        "lookback": {
+          "name": "Retour en arrière",
+          "description": "Secondes avant l'appel à inclure. Seulement quand le flux de la caméra tourne déjà (Précharger le flux, ou quelqu'un qui regarde)."
+        }
+      }
+    },
+    "stop_recording": {
+      "name": "Arrêter l'enregistrement",
+      "description": "Arrête les vidéos des caméras et attend qu'elles soient écrites. Répond avec les fichiers enregistrés."
+    }
+  }
+}
