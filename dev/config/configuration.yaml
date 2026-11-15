@@ -1,0 +1,28 @@
+# Development Home Assistant for Plooum CamRecorder. Started by dev/ha.sh.
+homeassistant:
+  name: CamRecorder Dev
+  unit_system: metric
+  time_zone: Europe/Paris
+  country: FR
+  language: en
+  auth_providers:
+    - type: trusted_networks
+      trusted_networks:
+        - 127.0.0.1/32
+        - "::1/128"
+      allow_bypass_login: true
+    - type: homeassistant
+
+# No `http:` block: dev/ha.sh seeds .storage/http (127.0.0.1:8130).
+frontend:
+config:
+media_source:
+stream:
+recorder:
+logger:
+  default: warning
+  logs:
+    custom_components.plooum_camrecorder: debug
+
+camera:
+  - platform: camrecorder_dev
