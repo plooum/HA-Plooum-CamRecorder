@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+.claude/settings.local.json
+.claude/worktrees/
+dev/config/*
+!dev/config/configuration.yaml
+!dev/config/custom_components/
+dev/config/custom_components/*
+!dev/config/custom_components/camrecorder_dev/
+dev/.hls/
+dev/.ha.pid
+dev/ha.log
+dev/.ha-token
+dev/ha.log*
+dev/.ha.pid
