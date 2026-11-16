@@ -11,7 +11,7 @@
           "cameras": "Cameras with entities"
         },
         "data_description": {
-          "folder": "Where photos and videos are saved, one subfolder per camera. Use a media folder of its own, declared in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <folder>): Home Assistant may then write there and shows it in the media browser.",
+          "folder": "Where photos and videos are saved, one subfolder per camera. Use a media folder of its own, declared in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: FOLDER): Home Assistant may then write there and shows it in the media browser.",
           "keep_days": "Files older than this are deleted. 0: kept forever.",
           "max_size_gb": "Above this, the oldest files are deleted. 0: no limit.",
           "cameras": "These cameras get a Take photo button, a Recording switch and Last photo / Last video sensors. The actions work with every camera anyway."
@@ -20,7 +20,7 @@
     },
     "error": {
       "not_absolute": "Give an absolute path.",
-      "not_allowed": "Home Assistant may not write there. Declare the folder as a media folder in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <folder>), make sure it exists (in Docker, mount it into the container), restart Home Assistant and try again."
+      "not_allowed": "Home Assistant may not write there. Declare the folder as a media folder in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: FOLDER), make sure it exists (in Docker, mount it into the container), restart Home Assistant and try again."
     },
     "abort": {
       "single_instance_allowed": "Plooum CamRecorder is already set up: change its options instead."
@@ -38,7 +38,7 @@
           "cameras": "Cameras with entities"
         },
         "data_description": {
-          "folder": "Where photos and videos are saved, one subfolder per camera. Use a media folder of its own, declared in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <folder>): Home Assistant may then write there and shows it in the media browser.",
+          "folder": "Where photos and videos are saved, one subfolder per camera. Use a media folder of its own, declared in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: FOLDER): Home Assistant may then write there and shows it in the media browser.",
           "keep_days": "Files older than this are deleted. 0: kept forever.",
           "max_size_gb": "Above this, the oldest files are deleted. 0: no limit.",
           "cameras": "These cameras get a Take photo button, a Recording switch and Last photo / Last video sensors. The actions work with every camera anyway."
@@ -47,7 +47,7 @@
     },
     "error": {
       "not_absolute": "Give an absolute path.",
-      "not_allowed": "Home Assistant may not write there. Declare the folder as a media folder in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <folder>), make sure it exists (in Docker, mount it into the container), restart Home Assistant and try again."
+      "not_allowed": "Home Assistant may not write there. Declare the folder as a media folder in configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: FOLDER), make sure it exists (in Docker, mount it into the container), restart Home Assistant and try again."
     }
   },
   "entity": {
