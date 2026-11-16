@@ -28,6 +28,21 @@ PARTIAL_RE = re.compile(r"^(\d{9,11})-recording\.mp4(?:\.tmp)?$")
 PARTIAL_MAX_AGE = 86400  # s: a partial video older than this was interrupted (restart, crash)
 
 
+def default_folder(media_dirs: dict[str, str], fallback_media: str, subfolder: str) -> str:
+    """The folder to offer when setting up.
+
+    A media folder of its own first (named `subfolder`, by its key or its path), then `subfolder`
+    in the "local" media folder (/media on Home Assistant OS), else in `fallback_media`. Never in
+    another media folder: it belongs to something else, a camera's own recordings for instance.
+    """
+    for key, path in media_dirs.items():
+        if key == subfolder or os.path.basename(os.path.normpath(path)) == subfolder:
+            return os.path.normpath(path)
+    if "local" in media_dirs:
+        return os.path.join(media_dirs["local"], subfolder)
+    return os.path.join(fallback_media, subfolder)
+
+
 def camera_slug(entity_id: str) -> str:
     """camera.garden -> garden"""
     return entity_id.split(".", 1)[-1]

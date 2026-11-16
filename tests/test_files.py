@@ -66,6 +66,24 @@ class Naming(unittest.TestCase):
             self.assertIsNone(files.media_content_id("/elsewhere/x.jpg", {"local": media}))
 
 
+class DefaultFolder(unittest.TestCase):
+    def pick(self, media_dirs, fallback="/media"):
+        return files.default_folder(media_dirs, fallback, "plooum_camrecorder")
+
+    def test_a_media_folder_of_its_own(self):
+        dirs = {"tapo_entree": "/media/tapo/entree", "plooum_camrecorder": "/media/plooum_camrecorder"}
+        self.assertEqual(self.pick(dirs), "/media/plooum_camrecorder")
+        self.assertEqual(self.pick({"recordings": "/mnt/nas/plooum_camrecorder/"}), "/mnt/nas/plooum_camrecorder")
+
+    def test_local_media_folder(self):
+        self.assertEqual(self.pick({"local": "/media"}), "/media/plooum_camrecorder")
+
+    def test_never_in_another_media_folder(self):
+        # A camera's own recordings folder is not taken: the fallback is
+        self.assertEqual(self.pick({"tapo": "/media/tapo/entree"}), "/media/plooum_camrecorder")
+        self.assertEqual(self.pick({}, "/config/media"), "/config/media/plooum_camrecorder")
+
+
 class Retention(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

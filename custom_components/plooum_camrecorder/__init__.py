@@ -19,7 +19,7 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import Platform
 from homeassistant.core import HassJob, HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.exceptions import ServiceValidationError
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.service import async_extract_entity_ids
 from homeassistant.helpers.typing import ConfigType
 
@@ -150,7 +150,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: CamRecorderConfigEntry) 
         float(opts.get(CONF_MAX_SIZE_GB, DEFAULT_MAX_SIZE_GB)),
     )
     entry.runtime_data = hub
-    await hub.async_start(list(opts.get(CONF_CAMERAS, [])))
+    cameras = list(opts.get(CONF_CAMERAS, []))
+    _remove_unconfigured_devices(hass, entry, cameras)
+    await hub.async_start(cameras)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_updated))
 
@@ -158,6 +160,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: CamRecorderConfigEntry) 
     # and stops the streams (a shutdown job runs first).
     entry.async_on_unload(hass.async_add_shutdown_job(HassJob(hub.async_stop)))
     return True
+
+
+def _remove_unconfigured_devices(hass: HomeAssistant, entry: ConfigEntry, cameras: list[str]) -> None:
+    """Remove the devices, and so the entities, of the cameras taken out of the options."""
+    registry = dr.async_get(hass)
+    for device in dr.async_entries_for_config_entry(registry, entry.entry_id):
+        if not any(domain == DOMAIN and ident in cameras for domain, ident in device.identifiers):
+            registry.async_update_device(device.id, remove_config_entry_id=entry.entry_id)
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, entry: ConfigEntry, device: dr.DeviceEntry
+) -> bool:
+    """A device can be deleted from the UI once its camera is no longer in the options."""
+    cameras = options(entry).get(CONF_CAMERAS, [])
+    return not any(domain == DOMAIN and ident in cameras for domain, ident in device.identifiers)
 
 
 async def _async_updated(hass: HomeAssistant, entry: CamRecorderConfigEntry) -> None:

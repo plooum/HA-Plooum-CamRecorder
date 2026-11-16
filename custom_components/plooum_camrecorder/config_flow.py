@@ -10,6 +10,9 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import selector
+from homeassistant.util.package import is_docker_env
+
+from . import files
 
 from .const import (
     CONF_CAMERAS,
@@ -25,8 +28,9 @@ from .const import (
 
 
 def default_folder(hass: HomeAssistant) -> str:
-    media = hass.config.media_dirs.get("local") or next(iter(hass.config.media_dirs.values()), None)
-    return os.path.join(media or hass.config.path("media"), DEFAULT_SUBFOLDER)
+    # Where Home Assistant puts its own media folder when none is configured.
+    fallback = "/media" if is_docker_env() else hass.config.path("media")
+    return files.default_folder(hass.config.media_dirs, fallback, DEFAULT_SUBFOLDER)
 
 
 def _schema(hass: HomeAssistant, values: dict[str, Any]) -> vol.Schema:
