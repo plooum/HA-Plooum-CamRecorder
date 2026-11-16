@@ -82,7 +82,7 @@ async def main() -> None:
             config_dir = (await r.json())["config_dir"]
         async with s.post(f"{URL}/api/config/config_entries/flow/{flow['flow_id']}", headers=headers(), json={
             "folder": f"{config_dir}/media/plooum_camrecorder", "keep_days": 30, "max_size_gb": 0,
-            "cameras": ["camera.live", "camera.still"],
+            "cameras": ["camera.live", "camera.still", "camera.cold"],
         }) as r:
             print("Plooum CamRecorder:", (await r.json()).get("type"))
 

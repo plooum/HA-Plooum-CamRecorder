@@ -71,6 +71,11 @@ async def main() -> None:
         last = await state("sensor.still_last_photo")
         check("sensor last photo", last["attributes"]["path"] == p2, last)
 
+        # A camera that was idle has no first picture: the photo tries again.
+        await asyncio.sleep(6)
+        st, res = await call("snapshot", {"entity_id": "camera.cold"})
+        check("snapshot of an idle camera tries again", st == 200 and res["service_response"]["files"][0]["path"].endswith(".jpg"), (st, res))
+
         # Fixed duration.
         st, res = await call("record", {"entity_id": "camera.live", "duration": 5})
         v = res["service_response"]["files"][0] if st == 200 else {}
@@ -121,7 +126,27 @@ async def main() -> None:
 
         await asyncio.sleep(0.5)
         kinds = [e["kind"] for e in events]
-        check("saved events", kinds.count("photo") == 3 and kinds.count("video") == 4, events)
+        check("saved events", kinds.count("photo") == 4 and kinds.count("video") == 4, events)
+
+        # A camera taken out of the options loses its entities and device; put back, they return.
+        async def set_cameras(cameras):
+            async with s.get(f"{URL}/api/config/config_entries/entry?domain={D}") as r:
+                entry_id = (await r.json())[0]["entry_id"]
+            async with s.post(f"{URL}/api/config/config_entries/options/flow", json={"handler": entry_id}) as r:
+                flow = await r.json()
+            data = {f["name"]: f.get("default") for f in flow["data_schema"]}
+            data["cameras"] = cameras
+            async with s.post(f"{URL}/api/config/config_entries/options/flow/{flow['flow_id']}", json=data) as r:
+                return (await r.json()).get("type")
+        await set_cameras(["camera.live", "camera.cold"])
+        await asyncio.sleep(3)
+        async with s.get(f"{URL}/api/states/switch.still_recording") as r:
+            gone = r.status == 404
+        check("a camera taken out of the options loses its entities", gone)
+        await set_cameras(["camera.live", "camera.still", "camera.cold"])
+        await asyncio.sleep(3)
+        sw = await state("switch.still_recording")
+        check("put back, they return", sw.get("state") == "off", sw)
         listener.cancel()
         await ws.close()
     print(f"\n{len(failures)} failure(s)" if failures else "\nAll passed")

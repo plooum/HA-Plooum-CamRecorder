@@ -29,7 +29,8 @@ DEFAULT_MAX_DURATION = 600  # s, start_recording stops by itself after it
 MAX_DURATION = 6 * 3600
 MAX_LOOKBACK = 30
 
-SNAPSHOT_TIMEOUT = 15  # s
+SNAPSHOT_TIMEOUT = 20  # s, all the tries of a photo together
+RETRY_DELAY = 1  # s before trying a photo again (a camera that was idle)
 STOP_TIMEOUT = 60  # s to wait for a stopped video to be written
 PURGE_INTERVAL = 3600  # s
 

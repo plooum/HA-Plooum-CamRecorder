@@ -11,7 +11,7 @@
           "cameras": "Caméras avec entités"
         },
         "data_description": {
-          "folder": "Où les photos et vidéos sont enregistrées, un sous-dossier par caméra. Doit être un dossier multimédia (ou dans allowlist_external_dirs) pour apparaître dans le navigateur multimédia.",
+          "folder": "Où les photos et vidéos sont enregistrées, un sous-dossier par caméra. Utilise un dossier multimédia dédié, déclaré dans configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <dossier>) : Home Assistant peut alors y écrire et l'affiche dans le navigateur multimédia.",
           "keep_days": "Les fichiers plus vieux sont supprimés. 0 : conservés pour toujours.",
           "max_size_gb": "Au-delà, les fichiers les plus anciens sont supprimés. 0 : pas de limite.",
           "cameras": "Ces caméras reçoivent un bouton Prendre une photo, un interrupteur Enregistrement et des capteurs Dernière photo / Dernière vidéo. Les actions marchent de toute façon avec toutes les caméras."
@@ -20,7 +20,7 @@
     },
     "error": {
       "not_absolute": "Donne un chemin absolu.",
-      "not_allowed": "Home Assistant n'a pas le droit d'écrire là : utilise un dossier multimédia ou ajoute-le à allowlist_external_dirs."
+      "not_allowed": "Home Assistant n'a pas le droit d'écrire là. Déclare le dossier comme dossier multimédia dans configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <dossier>), vérifie qu'il existe (sous Docker, monte-le dans le conteneur), redémarre Home Assistant et réessaie."
     },
     "abort": {
       "single_instance_allowed": "Plooum CamRecorder est déjà configuré : modifie plutôt ses options."
@@ -38,7 +38,7 @@
           "cameras": "Caméras avec entités"
         },
         "data_description": {
-          "folder": "Où les photos et vidéos sont enregistrées, un sous-dossier par caméra. Doit être un dossier multimédia (ou dans allowlist_external_dirs) pour apparaître dans le navigateur multimédia.",
+          "folder": "Où les photos et vidéos sont enregistrées, un sous-dossier par caméra. Utilise un dossier multimédia dédié, déclaré dans configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <dossier>) : Home Assistant peut alors y écrire et l'affiche dans le navigateur multimédia.",
           "keep_days": "Les fichiers plus vieux sont supprimés. 0 : conservés pour toujours.",
           "max_size_gb": "Au-delà, les fichiers les plus anciens sont supprimés. 0 : pas de limite.",
           "cameras": "Ces caméras reçoivent un bouton Prendre une photo, un interrupteur Enregistrement et des capteurs Dernière photo / Dernière vidéo. Les actions marchent de toute façon avec toutes les caméras."
@@ -47,7 +47,7 @@
     },
     "error": {
       "not_absolute": "Donne un chemin absolu.",
-      "not_allowed": "Home Assistant n'a pas le droit d'écrire là : utilise un dossier multimédia ou ajoute-le à allowlist_external_dirs."
+      "not_allowed": "Home Assistant n'a pas le droit d'écrire là. Déclare le dossier comme dossier multimédia dans configuration.yaml (homeassistant: media_dirs: plooum_camrecorder: <dossier>), vérifie qu'il existe (sous Docker, monte-le dans le conteneur), redémarre Home Assistant et réessaie."
     }
   },
   "entity": {

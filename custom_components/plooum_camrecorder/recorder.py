@@ -29,6 +29,7 @@ from .const import (
     KIND_PHOTO,
     KIND_VIDEO,
     PURGE_INTERVAL,
+    RETRY_DELAY,
     SNAPSHOT_TIMEOUT,
     STOP_TIMEOUT,
 )
@@ -199,28 +200,50 @@ class CameraRecorder:
 
     # Photos
 
+    async def _async_grab(self, camera: Any) -> tuple[bytes, str]:
+        """A picture of the camera and its content type, from its usual source first.
+
+        A camera that was idle often has no picture for the first request (a Tapo answers the
+        next one), and one source can fail while the other works: each source is tried, then
+        once more after RETRY_DELAY.
+        """
+        from homeassistant.components.camera import CameraEntityFeature, async_get_stream_image  # noqa: PLC0415
+
+        async def still() -> tuple[bytes | None, str]:
+            return await camera.async_camera_image(), camera.content_type or ""
+
+        async def stream() -> tuple[bytes | None, str]:
+            # As camera.snapshot does: a cold stream has no keyframe yet, wait for the next one.
+            return await async_get_stream_image(camera, wait_for_next_keyframe=True), "image/jpeg"
+
+        sources = [still]
+        if CameraEntityFeature.STREAM in camera.supported_features:
+            sources = [stream, still] if camera.use_stream_for_stills else [still, stream]
+        reason = ""
+        for attempt in range(2):
+            if attempt:
+                await asyncio.sleep(RETRY_DELAY)
+            for source in sources:
+                try:
+                    content, content_type = await source()
+                except HomeAssistantError as err:
+                    reason = str(err)
+                    continue
+                except Exception as err:  # noqa: BLE001 - a camera integration's own failure
+                    _LOGGER.debug("Picture of %s failed (%s)", self.entity_id, source.__name__, exc_info=True)
+                    reason = f"{type(err).__name__}: {err}"
+                    continue
+                if content:
+                    return content, content_type
+        raise HomeAssistantError(f"{self.entity_id}: no picture" + (f" ({reason})" if reason else ""))
+
     async def async_snapshot(self) -> dict[str, Any]:
         camera = self._camera()  # clear error when missing or off
-        # As camera.snapshot does: a camera that takes its stills from its stream waits for the
-        # next keyframe (a cold stream has none yet).
         try:
             async with asyncio.timeout(SNAPSHOT_TIMEOUT):
-                if camera.use_stream_for_stills:
-                    from homeassistant.components.camera import async_get_stream_image  # noqa: PLC0415
-
-                    content = await async_get_stream_image(camera, wait_for_next_keyframe=True)
-                else:
-                    content = await camera.async_camera_image()
+                content, content_type = await self._async_grab(camera)
         except TimeoutError as err:
             raise HomeAssistantError(f"{self.entity_id}: no picture after {SNAPSHOT_TIMEOUT} s") from err
-        except HomeAssistantError as err:
-            raise HomeAssistantError(f"{self.entity_id}: no picture ({err})") from err
-        except Exception as err:  # a camera integration's own failure
-            _LOGGER.debug("Picture of %s failed", self.entity_id, exc_info=True)
-            raise HomeAssistantError(f"{self.entity_id}: no picture ({type(err).__name__}: {err})") from err
-        if not content:
-            raise HomeAssistantError(f"{self.entity_id}: no picture")
-        content_type = camera.content_type or ""
         ext = "png" if "png" in content_type else "jpg"
         now = dt_util.now()
 
